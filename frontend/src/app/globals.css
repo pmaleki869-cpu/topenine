@@ -313,7 +313,8 @@ body {
 .hero {
   background: var(--dark-bg);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 20;
 }
 
 .hero-stat {

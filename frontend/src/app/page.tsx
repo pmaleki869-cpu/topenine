@@ -107,7 +107,7 @@ export default function HomePage() {
 
       {/* ━━━ 1. HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section id="hero" className="hero">
-        <div className="container-main relative z-10 pt-12 pb-12 lg:pt-16 lg:pb-16">
+        <div className="container-main relative z-30 pt-12 pb-12 lg:pt-16 lg:pb-16">
           <div className="max-w-2xl mx-auto text-center">
             {/* Contextual label */}
             <p className="text-[13px] uppercase tracking-[0.12em] text-dark-text-muted mb-3">
