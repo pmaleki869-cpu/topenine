@@ -1,12 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { getAllProducts, formatAED } from "@/lib/products";
+import { toggleStock } from "@/lib/admin-actions";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export default function InventoryPage() {
   const allProducts = useMemo(() => getAllProducts(), []);
   const [filter, setFilter] = useState<"all" | "in" | "out">("all");
   const [search, setSearch] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [togglingId, setTogglingId] = useState<number | null>(null);
 
   const filtered = useMemo(() => {
     let result = [...allProducts];
@@ -21,6 +26,19 @@ export default function InventoryPage() {
 
   const inStock = allProducts.filter((p) => p.is_in_stock).length;
   const outOfStock = allProducts.length - inStock;
+
+  function handleToggle(productId: number, currentStatus: boolean) {
+    setTogglingId(productId);
+    startTransition(async () => {
+      const result = await toggleStock(productId, !currentStatus);
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.error);
+      }
+      setTogglingId(null);
+    });
+  }
 
   return (
     <div className="space-y-4">
@@ -49,8 +67,8 @@ export default function InventoryPage() {
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
         <svg className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         <div>
-          <p className="text-[13px] font-medium text-blue-800">Binary stock status</p>
-          <p className="text-[12px] text-blue-700 mt-1">Current data uses boolean in/out stock status only. No quantity tracking. Connect a backend with quantity fields to enable full inventory management.</p>
+          <p className="text-[13px] font-medium text-blue-800">Quick stock toggle</p>
+          <p className="text-[12px] text-blue-700 mt-1">Click the toggle switch in each row to instantly flip a product&apos;s stock status between In Stock and Out of Stock.</p>
         </div>
       </div>
 
@@ -88,9 +106,21 @@ export default function InventoryPage() {
                   <td className="px-4 py-2.5 text-[12px] text-gray-500 font-mono">{p.sku || "—"}</td>
                   <td className="px-4 py-2.5 text-[13px] text-gray-900 font-medium">{p.price_aed > 0 ? formatAED(p.price_aed) : "—"}</td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold ${p.is_in_stock ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
-                      {p.is_in_stock ? "In Stock" : "Out"}
-                    </span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={p.is_in_stock}
+                      aria-label={`Toggle stock for ${p.name}`}
+                      onClick={() => handleToggle(p.id, p.is_in_stock)}
+                      disabled={isPending && togglingId === p.id}
+                      className={`relative inline-flex w-10 h-[22px] rounded-full transition-colors ${p.is_in_stock ? "bg-emerald-500" : "bg-red-400"} disabled:opacity-50`}
+                    >
+                      {isPending && togglingId === p.id ? (
+                        <Loader2 className="w-3.5 h-3.5 text-white animate-spin absolute top-[3px] left-[3px]" />
+                      ) : (
+                        <span className={`absolute top-[2px] left-[2px] w-[18px] h-[18px] bg-white rounded-full shadow-sm transition-transform ${p.is_in_stock ? "translate-x-[18px]" : ""}`} />
+                      )}
+                    </button>
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {p.is_purchasable ? (

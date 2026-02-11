@@ -84,11 +84,11 @@ export default function SettingsPage() {
           </div>
           <div className="flex justify-between border-b border-gray-100 pb-2">
             <dt className="text-[13px] text-gray-500">Authentication</dt>
-            <dd className="text-[13px] font-medium text-amber-600">Not configured</dd>
+            <dd className="text-[13px] font-medium text-emerald-600">JWT (jose) ✓</dd>
           </div>
           <div className="flex justify-between border-b border-gray-100 pb-2">
-            <dt className="text-[13px] text-gray-500">Database</dt>
-            <dd className="text-[13px] font-medium text-amber-600">Not configured</dd>
+            <dt className="text-[13px] text-gray-500">Data Layer</dt>
+            <dd className="text-[13px] font-medium text-emerald-600">JSON + Server Actions ✓</dd>
           </div>
         </dl>
       </div>
