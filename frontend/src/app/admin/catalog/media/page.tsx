@@ -67,9 +67,9 @@ export default function MediaLibraryPage() {
           <table className="w-full">
             <thead className="sticky top-0 bg-white">
               <tr className="border-b border-gray-200">
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase">ID</th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase">Product</th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase">SKU</th>
+                <th scope="col" className="text-left px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase">ID</th>
+                <th scope="col" className="text-left px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase">Product</th>
+                <th scope="col" className="text-left px-3 py-2 text-[11px] font-semibold text-gray-500 uppercase">SKU</th>
               </tr>
             </thead>
             <tbody>

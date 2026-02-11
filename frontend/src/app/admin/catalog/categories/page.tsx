@@ -23,12 +23,12 @@ export default function CategoriesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50/50">
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide w-12">ID</th>
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Name</th>
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Slug</th>
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Description</th>
-              <th className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Products</th>
-              <th className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">WC Count</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide w-12">ID</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Name</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Slug</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Description</th>
+              <th scope="col" className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Products</th>
+              <th scope="col" className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">WC Count</th>
             </tr>
           </thead>
           <tbody>

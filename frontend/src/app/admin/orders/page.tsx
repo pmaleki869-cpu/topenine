@@ -38,12 +38,12 @@ export default function OrdersPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50/50">
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Order</th>
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Date</th>
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Customer</th>
-              <th className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Items</th>
-              <th className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Total</th>
-              <th className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Order</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Date</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Customer</th>
+              <th scope="col" className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Items</th>
+              <th scope="col" className="text-right px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Total</th>
+              <th scope="col" className="text-left px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Status</th>
             </tr>
           </thead>
           <tbody>

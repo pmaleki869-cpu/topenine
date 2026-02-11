@@ -1,5 +1,18 @@
 import { getAllProducts, getCategories } from "@/lib/products";
 import Link from "next/link";
+import {
+  Package,
+  FolderOpen,
+  Warehouse,
+  ImageIcon,
+  TrendingUp,
+  ShoppingCart,
+  AlertTriangle,
+  Tag,
+  Layers,
+  Camera,
+} from "lucide-react";
+import { StockDonut, CategoryBarChart, PriceDistribution } from "./DashboardCharts";
 
 export default function AdminDashboard() {
   const products = getAllProducts();
@@ -16,62 +29,104 @@ export default function AdminDashboard() {
   );
 
   const kpis = [
-    { label: "Total Products", value: totalProducts, color: "bg-blue-500" },
-    { label: "In Stock", value: inStock, color: "bg-emerald-500" },
-    { label: "Out of Stock", value: outOfStock, color: "bg-red-500" },
-    { label: "On Sale", value: onSale, color: "bg-amber-500" },
-    { label: "Categories", value: categories.length, color: "bg-violet-500" },
-    { label: "With Images", value: withImages, color: "bg-cyan-500" },
+    { label: "Total Products", value: totalProducts, icon: Package, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "In Stock", value: inStock, icon: ShoppingCart, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Out of Stock", value: outOfStock, icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50" },
+    { label: "On Sale", value: onSale, icon: Tag, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Categories", value: categories.length, icon: Layers, color: "text-violet-600", bg: "bg-violet-50" },
+    { label: "With Images", value: withImages, icon: Camera, color: "text-cyan-600", bg: "bg-cyan-50" },
   ];
 
-  const recentProducts = [...products].sort((a, b) => b.id - a.id).slice(0, 8);
+  // Chart data
+  const stockData = [
+    { name: "In Stock", value: inStock },
+    { name: "Out of Stock", value: outOfStock },
+  ];
+
+  const categoryData = categories
+    .map((c) => ({
+      name: c.name.replace(/^OEM\s+/i, "").replace(/\s+Parts?$/i, ""),
+      count: c.count,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+
+  const priceRanges = [
+    { range: "0-50", min: 0, max: 50 },
+    { range: "50-200", min: 50, max: 200 },
+    { range: "200-500", min: 200, max: 500 },
+    { range: "500-1K", min: 500, max: 1000 },
+    { range: "1K-5K", min: 1000, max: 5000 },
+    { range: "5K+", min: 5000, max: Infinity },
+  ];
+  const priceData = priceRanges.map((r) => ({
+    range: r.range,
+    count: products.filter((p) => p.price_aed >= r.min && p.price_aed < r.max).length,
+  }));
+
+  const recentProducts = [...products].sort((a, b) => b.id - a.id).slice(0, 10);
 
   return (
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {kpis.map((kpi) => (
-          <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className={`w-2 h-2 rounded-full ${kpi.color}`} />
-              <span className="text-[11px] font-medium text-gray-500 uppercase tracking-wide">{kpi.label}</span>
+        {kpis.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div key={kpi.label} className="bg-white rounded-xl border border-gray-200/80 p-4 hover:shadow-sm transition-shadow">
+              <div className="flex items-center gap-2 mb-3">
+                <div className={`w-8 h-8 rounded-lg ${kpi.bg} flex items-center justify-center`}>
+                  <Icon className={`w-4 h-4 ${kpi.color}`} strokeWidth={1.75} />
+                </div>
+              </div>
+              <div className="text-[26px] font-bold text-gray-900 leading-none tracking-tight">{kpi.value.toLocaleString()}</div>
+              <div className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mt-1">{kpi.label}</div>
             </div>
-            <div className="text-[28px] font-bold text-gray-900 leading-none">{kpi.value.toLocaleString()}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Quick Actions + Stats */}
+      {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <StockDonut data={stockData} />
+        <CategoryBarChart data={categoryData} />
+        <PriceDistribution data={priceData} />
+      </div>
+
+      {/* Quick Actions + Catalog Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5">
           <h2 className="text-[14px] font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="space-y-2">
-            <Link href="/admin/catalog/products" className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" /></svg>
-              Manage Products
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/admin/catalog/products" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
+              <Package className="w-4 h-4" strokeWidth={1.5} />
+              Products
             </Link>
-            <Link href="/admin/catalog/categories" className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-              Manage Categories
+            <Link href="/admin/catalog/categories" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
+              <FolderOpen className="w-4 h-4" strokeWidth={1.5} />
+              Categories
             </Link>
-            <Link href="/admin/inventory" className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-              View Inventory
+            <Link href="/admin/inventory" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
+              <Warehouse className="w-4 h-4" strokeWidth={1.5} />
+              Inventory
             </Link>
-            <Link href="/admin/catalog/media" className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <Link href="/admin/catalog/media" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
+              <ImageIcon className="w-4 h-4" strokeWidth={1.5} />
               Media Library
             </Link>
           </div>
         </div>
 
         {/* Catalog Stats */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-[14px] font-semibold text-gray-900 mb-4">Catalog Stats</h2>
-          <dl className="space-y-3">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="w-4 h-4 text-gray-400" strokeWidth={1.5} />
+            <h2 className="text-[14px] font-semibold text-gray-900">Catalog Insights</h2>
+          </div>
+          <dl className="grid grid-cols-2 gap-x-8 gap-y-3">
             <div className="flex justify-between items-center">
-              <dt className="text-[13px] text-gray-500">Average Price</dt>
+              <dt className="text-[13px] text-gray-500">Avg Price</dt>
               <dd className="text-[13px] font-semibold text-gray-900">AED {avgPrice.toLocaleString()}</dd>
             </div>
             <div className="flex justify-between items-center">
@@ -87,33 +142,19 @@ export default function AdminDashboard() {
               <dd className="text-[13px] font-semibold text-gray-900">{products.filter((p) => p.is_purchasable).length}</dd>
             </div>
             <div className="flex justify-between items-center">
-              <dt className="text-[13px] text-gray-500">Variable Products</dt>
+              <dt className="text-[13px] text-gray-500">Variable</dt>
               <dd className="text-[13px] font-semibold text-gray-900">{products.filter((p) => p.type === "variable").length}</dd>
             </div>
+            <div className="flex justify-between items-center">
+              <dt className="text-[13px] text-gray-500">Sale Rate</dt>
+              <dd className="text-[13px] font-semibold text-gray-900">{Math.round((onSale / totalProducts) * 100)}%</dd>
+            </div>
           </dl>
-        </div>
-
-        {/* Categories Breakdown */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-[14px] font-semibold text-gray-900 mb-4">Categories</h2>
-          <div className="space-y-2">
-            {categories.slice(0, 8).map((cat) => (
-              <div key={cat.id} className="flex justify-between items-center">
-                <span className="text-[13px] text-gray-700 truncate">{cat.name}</span>
-                <span className="text-[12px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{cat.count}</span>
-              </div>
-            ))}
-            {categories.length > 8 && (
-              <Link href="/admin/catalog/categories" className="text-[12px] text-blue-600 hover:text-blue-700 font-medium">
-                View all {categories.length} categories →
-              </Link>
-            )}
-          </div>
         </div>
       </div>
 
       {/* Recent Products */}
-      <div className="bg-white rounded-xl border border-gray-200">
+      <div className="bg-white rounded-xl border border-gray-200/80">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 className="text-[14px] font-semibold text-gray-900">Recently Added Products</h2>
           <Link href="/admin/catalog/products" className="text-[12px] text-blue-600 hover:text-blue-700 font-medium">
@@ -124,15 +165,15 @@ export default function AdminDashboard() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Product</th>
-                <th className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">SKU</th>
-                <th className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Price</th>
-                <th className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Stock</th>
+                <th scope="col" className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Product</th>
+                <th scope="col" className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">SKU</th>
+                <th scope="col" className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Price</th>
+                <th scope="col" className="text-left px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Stock</th>
               </tr>
             </thead>
             <tbody>
               {recentProducts.map((p) => (
-                <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                   <td className="px-5 py-3">
                     <Link href={`/admin/catalog/products/${p.id}`} className="text-[13px] font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-1">
                       {p.name}

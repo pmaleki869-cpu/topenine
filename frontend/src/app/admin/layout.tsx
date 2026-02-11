@@ -1,119 +1,159 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { Toaster } from "sonner";
+import {
+  LayoutGrid,
+  Package,
+  FolderOpen,
+  ImageIcon,
+  ClipboardList,
+  Users,
+  Warehouse,
+  Settings,
+  ExternalLink,
+  Menu,
+  X,
+  LogOut,
+  ChevronDown,
+  Shield,
+} from "lucide-react";
+import { logoutAction } from "./login/actions";
 
 const NAV_SECTIONS = [
   {
     label: "Overview",
     items: [
-      { href: "/admin", label: "Dashboard", icon: "grid" },
+      { href: "/admin", label: "Dashboard", icon: LayoutGrid },
     ],
   },
   {
     label: "Catalog",
     items: [
-      { href: "/admin/catalog/products", label: "Products", icon: "box" },
-      { href: "/admin/catalog/categories", label: "Categories", icon: "folder" },
-      { href: "/admin/catalog/media", label: "Media", icon: "image" },
+      { href: "/admin/catalog/products", label: "Products", icon: Package },
+      { href: "/admin/catalog/categories", label: "Categories", icon: FolderOpen },
+      { href: "/admin/catalog/media", label: "Media", icon: ImageIcon },
     ],
   },
   {
     label: "Operations",
     items: [
-      { href: "/admin/orders", label: "Orders", icon: "receipt" },
-      { href: "/admin/customers", label: "Customers", icon: "users" },
-      { href: "/admin/inventory", label: "Inventory", icon: "warehouse" },
+      { href: "/admin/orders", label: "Orders", icon: ClipboardList },
+      { href: "/admin/customers", label: "Customers", icon: Users },
+      { href: "/admin/inventory", label: "Inventory", icon: Warehouse },
     ],
   },
   {
     label: "System",
     items: [
-      { href: "/admin/settings", label: "Settings", icon: "settings" },
+      { href: "/admin/settings", label: "Settings", icon: Settings },
     ],
   },
 ];
 
-function NavIcon({ name, className }: { name: string; className?: string }) {
-  const cls = className || "w-4 h-4";
-  switch (name) {
-    case "grid":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>;
-    case "box":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>;
-    case "folder":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>;
-    case "image":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
-    case "receipt":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>;
-    case "users":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
-    case "warehouse":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>;
-    case "settings":
-      return <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
-    default:
-      return null;
-  }
-}
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close user menu on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Close sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   function isActive(href: string) {
     if (href === "/admin") return pathname === "/admin";
     return pathname.startsWith(href);
   }
 
+  async function handleLogout() {
+    await logoutAction();
+    router.push("/admin/login");
+    router.refresh();
+  }
+
+  // Generate breadcrumb from pathname
+  const breadcrumb = pathname === "/admin"
+    ? "Dashboard"
+    : pathname
+        .split("/")
+        .filter(Boolean)
+        .slice(1)
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(" / ");
+
   const sidebar = (
-    <nav className="flex flex-col h-full bg-[#0f1729] text-white">
+    <nav aria-label="Admin navigation" className="flex flex-col h-full bg-[#0b1121] text-white">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 h-16 border-b border-white/10 shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-[13px] font-bold">TE</div>
+      <div className="flex items-center gap-3 px-5 h-16 border-b border-white/[0.06] shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-[13px] font-bold shadow-lg shadow-blue-500/20">
+          TE
+        </div>
         <div>
-          <div className="text-[14px] font-semibold leading-tight">TopEngine</div>
-          <div className="text-[11px] text-white/40">Admin Panel</div>
+          <div className="text-[14px] font-semibold leading-tight tracking-tight">TopEngine</div>
+          <div className="text-[11px] text-white/30 font-medium">Admin Panel</div>
         </div>
       </div>
 
       {/* Nav sections */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
         {NAV_SECTIONS.map((section) => (
-          <div key={section.label}>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-white/30 px-2 mb-2">
+          <div key={section.label} role="group" aria-labelledby={`nav-${section.label}`}>
+            <div
+              id={`nav-${section.label}`}
+              className="text-[11px] font-semibold uppercase tracking-wider text-white/25 px-3 mb-2"
+            >
               {section.label}
             </div>
-            <div className="space-y-0.5">
+            <ul className="space-y-0.5">
               {section.items.map((item) => {
                 const active = isActive(item.href);
+                const Icon = item.icon;
                 return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
-                      active
-                        ? "bg-blue-600/20 text-blue-400"
-                        : "text-white/60 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <NavIcon name={item.icon} className={`w-4 h-4 ${active ? "text-blue-400" : ""}`} />
-                    {item.label}
-                  </Link>
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                        active
+                          ? "bg-white/[0.08] text-white shadow-sm"
+                          : "text-white/50 hover:text-white/80 hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      <Icon className={`w-[18px] h-[18px] ${active ? "text-blue-400" : ""}`} strokeWidth={1.75} />
+                      {item.label}
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         ))}
       </div>
 
       {/* Bottom */}
-      <div className="border-t border-white/10 px-4 py-3 shrink-0">
-        <Link href="/" className="flex items-center gap-2 text-[12px] text-white/40 hover:text-white/70 transition-colors">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+      <div className="border-t border-white/[0.06] px-4 py-3 shrink-0">
+        <Link
+          href="/"
+          target="_blank"
+          className="flex items-center gap-2 text-[12px] text-white/30 hover:text-white/60 transition-colors"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
           View Storefront
         </Link>
       </div>
@@ -121,41 +161,99 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-gray-50/80 overflow-hidden">
+      <Toaster position="top-right" richColors closeButton />
+
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          role="presentation"
+        />
       )}
 
-      {/* Sidebar — desktop: fixed 240px, mobile: slide-over */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-60 transition-transform duration-200 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      {/* Sidebar */}
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-[248px] transition-transform duration-200 ease-out lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        aria-label="Admin sidebar"
+      >
+        {/* Mobile close button */}
+        <button
+          onClick={() => setSidebarOpen(false)}
+          className="lg:hidden absolute top-4 right-3 z-10 p-1 rounded-md hover:bg-white/10 text-white/50"
+          aria-label="Close sidebar"
+        >
+          <X className="w-5 h-5" />
+        </button>
         {sidebar}
       </aside>
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 shrink-0">
+        <header className="h-14 bg-white border-b border-gray-200/80 flex items-center justify-between px-4 lg:px-6 shrink-0 z-10">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-1.5 rounded-md hover:bg-gray-100 text-gray-500"
+              className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
               aria-label="Open sidebar"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-[14px] font-semibold text-gray-700 capitalize">
-              {pathname === "/admin" ? "Dashboard" : pathname.split("/").filter(Boolean).slice(1).join(" / ")}
+            <h1 className="text-[14px] font-semibold text-gray-800">
+              {breadcrumb}
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[12px] text-gray-400">Admin</span>
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[12px] font-bold text-white">A</div>
+
+          {/* User menu */}
+          <div className="relative" ref={userMenuRef}>
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              aria-expanded={userMenuOpen}
+              aria-haspopup="true"
+            >
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-[11px] font-bold text-white">
+                A
+              </div>
+              <span className="text-[13px] font-medium text-gray-700 hidden sm:inline">Admin</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Dropdown */}
+            {userMenuOpen && (
+              <div className="absolute right-0 top-full mt-1.5 w-52 bg-white rounded-xl border border-gray-200 shadow-lg shadow-gray-200/50 py-1.5 z-50">
+                <div className="px-3.5 py-2.5 border-b border-gray-100">
+                  <p className="text-[13px] font-medium text-gray-900">Admin</p>
+                  <p className="text-[12px] text-gray-400">admin@topengine.ae</p>
+                </div>
+                <div className="py-1">
+                  <Link
+                    href="/admin/settings"
+                    className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-gray-600 hover:bg-gray-50 transition-colors"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <Shield className="w-4 h-4" />
+                    Settings
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <main id="admin-content" className="flex-1 overflow-y-auto p-4 lg:p-6">
           {children}
         </main>
       </div>

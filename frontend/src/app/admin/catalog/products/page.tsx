@@ -73,12 +73,14 @@ export default function ProductsListPage() {
           <input
             type="text"
             placeholder="Search by name, SKU, or ID..."
+            aria-label="Search products"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="flex-1 min-w-[200px] px-3 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
           <select
             value={stockFilter}
+            aria-label="Filter by stock status"
             onChange={(e) => { setStockFilter(e.target.value as "all" | "in" | "out"); setPage(1); }}
             className="px-3 py-2 text-[13px] border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
@@ -88,6 +90,7 @@ export default function ProductsListPage() {
           </select>
           <select
             value={categoryFilter}
+            aria-label="Filter by category"
             onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
             className="px-3 py-2 text-[13px] border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
@@ -105,25 +108,25 @@ export default function ProductsListPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50/50">
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide w-12">
+                <th scope="col" aria-sort={sortBy === "id" ? (sortDir === "asc" ? "ascending" : "descending") : "none"} className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide w-12">
                   <button onClick={() => toggleSort("id")} className="hover:text-gray-900">
                     ID {sortBy === "id" && (sortDir === "asc" ? "↑" : "↓")}
                   </button>
                 </th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Image</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <th scope="col" className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Image</th>
+                <th scope="col" aria-sort={sortBy === "name" ? (sortDir === "asc" ? "ascending" : "descending") : "none"} className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
                   <button onClick={() => toggleSort("name")} className="hover:text-gray-900">
                     Product {sortBy === "name" && (sortDir === "asc" ? "↑" : "↓")}
                   </button>
                 </th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">SKU</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Category</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <th scope="col" className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">SKU</th>
+                <th scope="col" className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Category</th>
+                <th scope="col" aria-sort={sortBy === "price" ? (sortDir === "asc" ? "ascending" : "descending") : "none"} className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
                   <button onClick={() => toggleSort("price")} className="hover:text-gray-900">
                     Price {sortBy === "price" && (sortDir === "asc" ? "↑" : "↓")}
                   </button>
                 </th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Stock</th>
+                <th scope="col" className="text-left px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Stock</th>
               </tr>
             </thead>
             <tbody>
