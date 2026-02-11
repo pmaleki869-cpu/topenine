@@ -90,6 +90,13 @@ export function getFilteredProducts(filters: FilterState): {
     // For now, filter by search within category names
   }
 
+  // Category filter (direct category ID)
+  if (filters.categoryId) {
+    results = results.filter((p) =>
+      p.categories.some((c) => c.id === filters.categoryId)
+    );
+  }
+
   // Part type filter
   if (filters.partType) {
     results = results.filter(

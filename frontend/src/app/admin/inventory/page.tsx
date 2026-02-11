@@ -4,12 +4,15 @@ import { useState, useMemo, useTransition } from "react";
 import { getAllProducts, formatAED } from "@/lib/products";
 import { toggleStock } from "@/lib/admin-actions";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+
+const PER_PAGE = 50;
 
 export default function InventoryPage() {
   const allProducts = useMemo(() => getAllProducts(), []);
   const [filter, setFilter] = useState<"all" | "in" | "out">("all");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
@@ -23,6 +26,12 @@ export default function InventoryPage() {
     }
     return result;
   }, [allProducts, filter, search]);
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const paged = useMemo(() => {
+    const start = (page - 1) * PER_PAGE;
+    return filtered.slice(start, start + PER_PAGE);
+  }, [filtered, page]);
 
   const inStock = allProducts.filter((p) => p.is_in_stock).length;
   const outOfStock = allProducts.length - inStock;
@@ -49,15 +58,15 @@ export default function InventoryPage() {
 
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-4">
-        <button onClick={() => setFilter("all")} className={`bg-white rounded-xl border p-4 text-center transition-colors ${filter === "all" ? "border-blue-300 ring-2 ring-blue-100" : "border-gray-200 hover:border-gray-300"}`}>
+        <button onClick={() => { setFilter("all"); setPage(1); }} className={`bg-white rounded-xl border p-4 text-center transition-colors ${filter === "all" ? "border-blue-300 ring-2 ring-blue-100" : "border-gray-200 hover:border-gray-300"}`}>
           <div className="text-[28px] font-bold text-gray-900">{allProducts.length}</div>
           <div className="text-[12px] text-gray-500">Total</div>
         </button>
-        <button onClick={() => setFilter("in")} className={`bg-white rounded-xl border p-4 text-center transition-colors ${filter === "in" ? "border-emerald-300 ring-2 ring-emerald-100" : "border-gray-200 hover:border-gray-300"}`}>
+        <button onClick={() => { setFilter("in"); setPage(1); }} className={`bg-white rounded-xl border p-4 text-center transition-colors ${filter === "in" ? "border-emerald-300 ring-2 ring-emerald-100" : "border-gray-200 hover:border-gray-300"}`}>
           <div className="text-[28px] font-bold text-emerald-600">{inStock}</div>
           <div className="text-[12px] text-gray-500">In Stock</div>
         </button>
-        <button onClick={() => setFilter("out")} className={`bg-white rounded-xl border p-4 text-center transition-colors ${filter === "out" ? "border-red-300 ring-2 ring-red-100" : "border-gray-200 hover:border-gray-300"}`}>
+        <button onClick={() => { setFilter("out"); setPage(1); }} className={`bg-white rounded-xl border p-4 text-center transition-colors ${filter === "out" ? "border-red-300 ring-2 ring-red-100" : "border-gray-200 hover:border-gray-300"}`}>
           <div className="text-[28px] font-bold text-red-600">{outOfStock}</div>
           <div className="text-[12px] text-gray-500">Out of Stock</div>
         </button>
@@ -79,7 +88,7 @@ export default function InventoryPage() {
           placeholder="Search by name or SKU..."
           aria-label="Search inventory"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
         />
       </div>
@@ -99,7 +108,7 @@ export default function InventoryPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 100).map((p) => (
+              {paged.map((p) => (
                 <tr key={p.id} className={`border-b border-gray-50 transition-colors ${!p.is_in_stock ? "bg-red-50/30" : "hover:bg-gray-50/50"}`}>
                   <td className="px-4 py-2.5 text-[12px] text-gray-400 font-mono">{p.id}</td>
                   <td className="px-4 py-2.5 text-[13px] text-gray-900 line-clamp-1">{p.name}</td>
@@ -134,9 +143,52 @@ export default function InventoryPage() {
             </tbody>
           </table>
         </div>
-        {filtered.length > 100 && (
-          <div className="px-4 py-3 border-t border-gray-100 text-[12px] text-gray-400 text-center">
-            Showing 100 of {filtered.length} products
+        {totalPages > 1 && (
+          <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+            <span className="text-[12px] text-gray-500">
+              Page {page} of {totalPages} &middot; {filtered.length} products
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4 text-gray-600" />
+              </button>
+              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                let pageNum: number;
+                if (totalPages <= 7) {
+                  pageNum = i + 1;
+                } else if (page <= 4) {
+                  pageNum = i + 1;
+                } else if (page >= totalPages - 3) {
+                  pageNum = totalPages - 6 + i;
+                } else {
+                  pageNum = page - 3 + i;
+                }
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-[12px] font-medium transition-colors ${
+                      page === pageNum
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                className="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
           </div>
         )}
       </div>

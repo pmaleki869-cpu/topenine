@@ -1,4 +1,4 @@
-import { getAllProducts, getCategories } from "@/lib/products";
+import { getAllProducts, getCategories, formatAED } from "@/lib/products";
 import Link from "next/link";
 import {
   Package,
@@ -18,10 +18,13 @@ import {
   Settings,
 } from "lucide-react";
 import { StockDonut, CategoryBarChart, PriceDistribution } from "./DashboardCharts";
+import { getInquiries, getLeads } from "@/lib/admin-actions";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
   const products = getAllProducts();
   const categories = getCategories();
+  const inquiries = await getInquiries();
+  const leads = await getLeads();
 
   const totalProducts = products.length;
   const inStock = products.filter((p) => p.is_in_stock).length;
@@ -213,6 +216,127 @@ export default function AdminDashboard() {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Low-Stock Alerts + Recent Inquiries + Recent Leads */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Low-Stock Alerts */}
+        <div className="bg-white rounded-xl border border-gray-200/80">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" strokeWidth={1.5} />
+              <h2 className="text-[14px] font-semibold text-gray-900">Low-Stock Alerts</h2>
+            </div>
+            <Link href="/admin/inventory" className="text-[12px] text-blue-600 hover:text-blue-700 font-medium">
+              Inventory →
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {products.filter((p) => !p.is_in_stock && p.is_purchasable).length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="text-[13px] text-gray-400">All purchasable items are in stock</p>
+              </div>
+            ) : (
+              products
+                .filter((p) => !p.is_in_stock && p.is_purchasable)
+                .slice(0, 8)
+                .map((p) => (
+                  <div key={p.id} className="px-5 py-2.5 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <Link href={`/admin/catalog/products/${p.id}`} className="text-[13px] font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-1">
+                        {p.name}
+                      </Link>
+                      <p className="text-[11px] text-gray-400 font-mono">{p.sku || "—"}</p>
+                    </div>
+                    <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-50 text-red-700 shrink-0 ml-2">
+                      Out of Stock
+                    </span>
+                  </div>
+                ))
+            )}
+          </div>
+          {products.filter((p) => !p.is_in_stock && p.is_purchasable).length > 8 && (
+            <div className="px-5 py-2.5 border-t border-gray-100 text-center">
+              <span className="text-[12px] text-gray-400">
+                +{products.filter((p) => !p.is_in_stock && p.is_purchasable).length - 8} more
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Inquiries */}
+        <div className="bg-white rounded-xl border border-gray-200/80">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-blue-500" strokeWidth={1.5} />
+              <h2 className="text-[14px] font-semibold text-gray-900">Recent Inquiries</h2>
+            </div>
+            <Link href="/admin/orders" className="text-[12px] text-blue-600 hover:text-blue-700 font-medium">
+              View all →
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {inquiries.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="text-[13px] text-gray-400">No inquiries yet</p>
+              </div>
+            ) : (
+              inquiries.slice(0, 6).map((inq) => (
+                <div key={inq.id} className="px-5 py-2.5 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-medium text-gray-900 line-clamp-1">{inq.customer_name}</p>
+                    <p className="text-[11px] text-gray-400">{inq.phone || "No phone"} &middot; {inq.created_at}</p>
+                  </div>
+                  <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize shrink-0 ml-2 ${
+                    inq.status === "new" ? "bg-blue-50 text-blue-700" :
+                    inq.status === "confirmed" ? "bg-emerald-50 text-emerald-700" :
+                    inq.status === "cancelled" ? "bg-red-50 text-red-700" :
+                    "bg-gray-50 text-gray-600"
+                  }`}>
+                    {inq.status}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Recent Leads */}
+        <div className="bg-white rounded-xl border border-gray-200/80">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-violet-500" strokeWidth={1.5} />
+              <h2 className="text-[14px] font-semibold text-gray-900">Recent Leads</h2>
+            </div>
+            <Link href="/admin/customers" className="text-[12px] text-blue-600 hover:text-blue-700 font-medium">
+              View all →
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {leads.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="text-[13px] text-gray-400">No leads yet</p>
+              </div>
+            ) : (
+              leads.slice(0, 6).map((lead) => (
+                <div key={lead.id} className="px-5 py-2.5 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-medium text-gray-900 line-clamp-1">{lead.name}</p>
+                    <p className="text-[11px] text-gray-400">{lead.source} &middot; {lead.created_at}</p>
+                  </div>
+                  <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize shrink-0 ml-2 ${
+                    lead.status === "new" ? "bg-blue-50 text-blue-700" :
+                    lead.status === "converted" ? "bg-emerald-50 text-emerald-700" :
+                    lead.status === "lost" ? "bg-red-50 text-red-700" :
+                    "bg-gray-50 text-gray-600"
+                  }`}>
+                    {lead.status}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

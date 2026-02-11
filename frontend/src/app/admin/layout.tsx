@@ -42,8 +42,8 @@ const NAV_SECTIONS = [
   {
     label: "Operations",
     items: [
-      { href: "/admin/orders", label: "Orders", icon: ClipboardList },
-      { href: "/admin/customers", label: "Customers", icon: Users },
+      { href: "/admin/orders", label: "Inquiries", icon: ClipboardList },
+      { href: "/admin/customers", label: "Leads", icon: Users },
       { href: "/admin/inventory", label: "Inventory", icon: Warehouse },
     ],
   },

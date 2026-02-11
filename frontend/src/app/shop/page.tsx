@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { Pagination } from "@/components/Pagination";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { getFilteredProducts } from "@/lib/products";
+import { getFilteredProducts, getCategories } from "@/lib/products";
 
 const PER_PAGE = 24;
 
@@ -20,8 +20,13 @@ function ShopContent() {
   const [inStockOnly, setInStockOnly] = useState(searchParams.get("inStockOnly") === "true");
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "relevance");
+  const [priceMin, setPriceMin] = useState(searchParams.get("priceMin") || "");
+  const [priceMax, setPriceMax] = useState(searchParams.get("priceMax") || "");
+  const [categoryId, setCategoryId] = useState(Number(searchParams.get("categoryId")) || 0);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const categories = useMemo(() => getCategories(), []);
 
   const syncUrl = useCallback(
     (updates: Record<string, string>) => {
@@ -32,6 +37,9 @@ function ShopContent() {
         inStockOnly: inStockOnly ? "true" : "",
         search,
         sort,
+        priceMin,
+        priceMax,
+        categoryId: categoryId ? String(categoryId) : "",
         page: String(page),
         ...updates,
       };
@@ -41,7 +49,7 @@ function ShopContent() {
       });
       router.replace(`/shop?${params.toString()}`, { scroll: false });
     },
-    [partType, purchasableOnly, inStockOnly, search, sort, page, router]
+    [partType, purchasableOnly, inStockOnly, search, sort, priceMin, priceMax, categoryId, page, router]
   );
 
   const { products, total, pages } = useMemo(
@@ -52,13 +60,16 @@ function ShopContent() {
         inStockOnly,
         search,
         sort: sort as "relevance" | "newest" | "name-asc" | "name-desc" | "price-asc" | "price-desc",
+        priceMin: priceMin ? Number(priceMin) : undefined,
+        priceMax: priceMax ? Number(priceMax) : undefined,
+        categoryId: categoryId || undefined,
         page,
         perPage: PER_PAGE,
       }),
-    [partType, purchasableOnly, inStockOnly, search, sort, page]
+    [partType, purchasableOnly, inStockOnly, search, sort, priceMin, priceMax, categoryId, page]
   );
 
-  const hasFilters = partType || purchasableOnly || inStockOnly || search;
+  const hasFilters = partType || purchasableOnly || inStockOnly || search || priceMin || priceMax || categoryId;
 
   const handleClearAll = () => {
     setPartType("");
@@ -66,6 +77,9 @@ function ShopContent() {
     setInStockOnly(false);
     setSearch("");
     setSort("relevance");
+    setPriceMin("");
+    setPriceMax("");
+    setCategoryId(0);
     setPage(1);
     router.replace("/shop", { scroll: false });
   };
@@ -75,6 +89,9 @@ function ShopContent() {
   const handleInStockChange = (v: boolean) => { setInStockOnly(v); setPage(1); syncUrl({ inStockOnly: v ? "true" : "", page: "1" }); };
   const handleSearchChange = (v: string) => { setSearch(v); setPage(1); syncUrl({ search: v, page: "1" }); };
   const handleSortChange = (v: string) => { setSort(v); setPage(1); syncUrl({ sort: v, page: "1" }); };
+  const handlePriceMinChange = (v: string) => { setPriceMin(v); setPage(1); syncUrl({ priceMin: v, page: "1" }); };
+  const handlePriceMaxChange = (v: string) => { setPriceMax(v); setPage(1); syncUrl({ priceMax: v, page: "1" }); };
+  const handleCategoryIdChange = (v: number) => { setCategoryId(v); setPage(1); syncUrl({ categoryId: v ? String(v) : "", page: "1" }); };
   const handlePageChange = (p: number) => { setPage(p); syncUrl({ page: String(p) }); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   return (
@@ -104,11 +121,18 @@ function ShopContent() {
                 inStockOnly={inStockOnly}
                 search={search}
                 sort={sort}
+                priceMin={priceMin}
+                priceMax={priceMax}
+                categoryId={categoryId}
+                categories={categories}
                 onPartTypeChange={handlePartTypeChange}
                 onPurchasableChange={handlePurchasableChange}
                 onInStockChange={handleInStockChange}
                 onSearchChange={handleSearchChange}
                 onSortChange={handleSortChange}
+                onPriceMinChange={handlePriceMinChange}
+                onPriceMaxChange={handlePriceMaxChange}
+                onCategoryIdChange={handleCategoryIdChange}
                 onClearAll={handleClearAll}
                 total={total}
               />
@@ -143,11 +167,18 @@ function ShopContent() {
                   inStockOnly={inStockOnly}
                   search={search}
                   sort={sort}
+                  priceMin={priceMin}
+                  priceMax={priceMax}
+                  categoryId={categoryId}
+                  categories={categories}
                   onPartTypeChange={handlePartTypeChange}
                   onPurchasableChange={handlePurchasableChange}
                   onInStockChange={handleInStockChange}
                   onSearchChange={handleSearchChange}
                   onSortChange={handleSortChange}
+                  onPriceMinChange={handlePriceMinChange}
+                  onPriceMaxChange={handlePriceMaxChange}
+                  onCategoryIdChange={handleCategoryIdChange}
                   onClearAll={handleClearAll}
                   total={total}
                 />

@@ -150,12 +150,13 @@ export default async function VehicleModelPage({
             {products.length > 0 && ` ${products.length} parts in stock.`}
           </p>
 
-          {/* Engine badges — linked to part-type sections */}
+          {/* Engine badges — linked to shop with category filter */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {model.engines.map((eng) => (
-              <div
+              <Link
                 key={eng.code}
-                className="badge-engine !bg-dark-surface !text-dark-text-primary !border !border-dark-border px-3 py-1.5 text-[14px]"
+                href={`/shop?categoryId=${eng.categoryIds[0]}&search=${encodeURIComponent(eng.code)}`}
+                className="badge-engine !bg-dark-surface !text-dark-text-primary !border !border-dark-border px-3 py-1.5 text-[14px] hover:!bg-dark-surface-hover transition-colors"
               >
                 <span className="font-mono font-semibold text-dark-accent">
                   {eng.code}
@@ -163,7 +164,7 @@ export default async function VehicleModelPage({
                 <span className="text-dark-text-secondary ml-1.5">
                   {eng.displacement} {eng.fuel}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -300,7 +301,7 @@ export default async function VehicleModelPage({
                 </p>
               </div>
               <Link
-                href={`/shop?search=${encodeURIComponent(`${make.name} ${model.name}`)}`}
+                href={`/shop?categoryId=${model.engines[0]?.categoryIds[0] || ""}`}
                 className="btn btn-secondary btn-sm"
               >
                 Advanced filter →

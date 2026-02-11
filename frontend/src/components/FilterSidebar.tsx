@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { PART_TYPES } from "@/data/vehicle-hierarchy";
+import type { Category } from "@/types";
 
 interface FilterSidebarProps {
   partType: string;
@@ -9,11 +10,18 @@ interface FilterSidebarProps {
   inStockOnly: boolean;
   search: string;
   sort: string;
+  priceMin: string;
+  priceMax: string;
+  categoryId: number;
+  categories: Category[];
   onPartTypeChange: (v: string) => void;
   onPurchasableChange: (v: boolean) => void;
   onInStockChange: (v: boolean) => void;
   onSearchChange: (v: string) => void;
   onSortChange: (v: string) => void;
+  onPriceMinChange: (v: string) => void;
+  onPriceMaxChange: (v: string) => void;
+  onCategoryIdChange: (v: number) => void;
   onClearAll: () => void;
   total: number;
   partTypeCounts?: Record<string, number>;
@@ -38,17 +46,24 @@ export function FilterSidebar({
   inStockOnly,
   search,
   sort,
+  priceMin,
+  priceMax,
+  categoryId,
+  categories,
   onPartTypeChange,
   onPurchasableChange,
   onInStockChange,
   onSearchChange,
   onSortChange,
+  onPriceMinChange,
+  onPriceMaxChange,
+  onCategoryIdChange,
   onClearAll,
   total,
   partTypeCounts,
 }: FilterSidebarProps) {
   const activePartTypes = PART_TYPES.filter((pt) => pt.slug !== "other");
-  const hasFilters = partType || purchasableOnly || inStockOnly || search;
+  const hasFilters = partType || purchasableOnly || inStockOnly || search || priceMin || priceMax || categoryId;
 
   const handleSearchSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -109,6 +124,69 @@ export function FilterSidebar({
           ))}
         </select>
       </div>
+
+      {/* Price Range */}
+      <div>
+        <label className="block text-[12px] font-semibold text-text-secondary uppercase tracking-wide mb-1.5">
+          Price (AED)
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="number"
+            value={priceMin}
+            onChange={(e) => onPriceMinChange(e.target.value)}
+            placeholder="Min"
+            min="0"
+            className="w-full px-3 py-2 text-[14px] border border-border rounded-md bg-white text-text-primary 
+                       placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-interactive/40"
+          />
+          <span className="text-text-disabled self-center text-[14px]">–</span>
+          <input
+            type="number"
+            value={priceMax}
+            onChange={(e) => onPriceMaxChange(e.target.value)}
+            placeholder="Max"
+            min="0"
+            className="w-full px-3 py-2 text-[14px] border border-border rounded-md bg-white text-text-primary 
+                       placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-interactive/40"
+          />
+        </div>
+      </div>
+
+      {/* Category */}
+      {categories.length > 0 && (
+        <div>
+          <label className="block text-[12px] font-semibold text-text-secondary uppercase tracking-wide mb-1.5">
+            Category
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => onCategoryIdChange(0)}
+              className={`px-2.5 py-1 text-[12px] font-medium rounded-full border transition-colors ${
+                !categoryId
+                  ? "bg-interactive text-white border-interactive"
+                  : "bg-white text-text-primary border-border hover:border-interactive/50"
+              }`}
+            >
+              All
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => onCategoryIdChange(cat.id)}
+                className={`px-2.5 py-1 text-[12px] font-medium rounded-full border transition-colors ${
+                  categoryId === cat.id
+                    ? "bg-interactive text-white border-interactive"
+                    : "bg-white text-text-primary border-border hover:border-interactive/50"
+                }`}
+              >
+                {cat.name.replace(/^OEM\s+/i, "").replace(/\s+Parts?$/i, "")}
+                <span className="ml-1 opacity-60">{cat.count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Part Type */}
       <div>

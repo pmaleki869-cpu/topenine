@@ -105,8 +105,7 @@ export interface FilterState {
   make?: string;
   model?: string;
   engine?: string;
-  partType?: string;
-  priceMin?: number;
+  partType?: string;  categoryId?: number;  priceMin?: number;
   priceMax?: number;
   inStockOnly?: boolean;
   purchasableOnly?: boolean;

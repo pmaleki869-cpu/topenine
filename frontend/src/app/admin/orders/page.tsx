@@ -17,7 +17,9 @@ import {
   MessageCircle,
   Trash2,
   ChevronRight,
+  ChevronLeft,
   Search,
+  Filter,
 } from "lucide-react";
 
 const STATUS_FLOW = [
@@ -29,6 +31,8 @@ const STATUS_FLOW = [
   "closed",
 ] as const;
 
+const ALL_STATUSES = [...STATUS_FLOW, "cancelled"] as const;
+
 const STATUS_COLORS: Record<string, string> = {
   new: "bg-blue-50 text-blue-700 border-blue-200",
   contacted: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -39,12 +43,16 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: "bg-red-50 text-red-700 border-red-200",
 };
 
+const PER_PAGE = 15;
+
 export default function OrdersPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Form fields
@@ -129,14 +137,25 @@ export default function OrdersPage() {
     return `https://wa.me/${clean}`;
   }
 
-  const filtered = search
+  const filtered = search || statusFilter
     ? inquiries.filter(
-        (i) =>
-          i.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-          i.phone.includes(search) ||
-          i.status.includes(search.toLowerCase())
+        (i) => {
+          if (statusFilter && i.status !== statusFilter) return false;
+          if (search) {
+            const q = search.toLowerCase();
+            return (
+              i.customer_name.toLowerCase().includes(q) ||
+              i.phone.includes(search) ||
+              i.status.includes(q)
+            );
+          }
+          return true;
+        }
       )
     : inquiries;
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   if (!loaded) {
     return (
@@ -216,17 +235,32 @@ export default function OrdersPage() {
         </div>
       )}
 
-      {/* Search */}
+      {/* Search + Filter */}
       <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search inquiries..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-          />
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search inquiries..."
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="w-full pl-10 pr-3 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            />
+          </div>
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+              className="pl-10 pr-8 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white appearance-none"
+            >
+              <option value="">All statuses</option>
+              {ALL_STATUSES.map((s) => (
+                <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -244,7 +278,7 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {filtered.map((inq) => {
+            {paged.map((inq) => {
               const next = getNextStatus(inq.status);
               return (
                 <tr key={inq.id} className="hover:bg-gray-50/50 transition-colors">
@@ -320,6 +354,33 @@ export default function OrdersPage() {
             <p className="text-[13px] text-gray-400">
               {inquiries.length === 0 ? "No inquiries yet \u2014 create one above" : "No inquiries match your search"}
             </p>
+          </div>
+        )}
+        {totalPages > 1 && (
+          <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
+            <span className="text-[12px] text-gray-500">
+              Page {page} of {totalPages} &middot; {filtered.length} inquiries
+            </span>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30">
+                <ChevronLeft className="w-4 h-4 text-gray-600" />
+              </button>
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let n: number;
+                if (totalPages <= 5) n = i + 1;
+                else if (page <= 3) n = i + 1;
+                else if (page >= totalPages - 2) n = totalPages - 4 + i;
+                else n = page - 2 + i;
+                return (
+                  <button key={n} onClick={() => setPage(n)} className={`w-8 h-8 rounded-md text-[12px] font-medium ${page === n ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}>
+                    {n}
+                  </button>
+                );
+              })}
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30">
+                <ChevronRight className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
           </div>
         )}
       </div>
