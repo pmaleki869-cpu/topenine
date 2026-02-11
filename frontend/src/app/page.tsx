@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ProductCard } from "@/components/ProductCard";
 import { HeroSearch } from "@/components/HeroSearch";
-import { getAllProducts } from "@/lib/products";
+import { InStockShowcase } from "@/components/InStockShowcase";
+import { getAllProducts, getInStockByMake } from "@/lib/products";
 import { VEHICLE_HIERARCHY, PART_TYPES } from "@/data/vehicle-hierarchy";
 import { organizationJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
@@ -87,6 +88,8 @@ export default function HomePage() {
     .filter((p) => p.is_purchasable && p.price_aed > 0 && p.is_in_stock)
     .slice(0, 8);
 
+  const { groups: makeGroups, all: allMix, totalInStock } = getInStockByMake();
+
   const recent = [...allProducts]
     .filter((p) => p.price_aed > 0)
     .sort((a, b) => b.id - a.id)
@@ -150,21 +153,11 @@ export default function HomePage() {
       {/* ━━━ 2. IN STOCK NOW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section className="section-gap">
         <div className="container-main">
-          <div className="section-label">
-            <h2 className="text-[22px] font-semibold text-text-primary">
-              In Stock Now
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/shop?purchasableOnly=true" className="btn btn-secondary">
-              Browse all in-stock parts →
-            </Link>
-          </div>
+          <InStockShowcase
+            groups={makeGroups}
+            allProducts={allMix}
+            totalInStock={totalInStock}
+          />
         </div>
       </section>
 

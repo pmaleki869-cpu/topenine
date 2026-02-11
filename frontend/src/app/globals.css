@@ -384,3 +384,134 @@ body {
 }
 
 /* ─── (CTA banner CSS removed — now uses inline styles + Tailwind classes) ── */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Instant Search System — v1.0
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Dropdown entrance animation */
+@keyframes search-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.search-dropdown {
+  animation: search-dropdown-in 0.15s ease-out;
+  transform-origin: top center;
+}
+
+/* Mobile fullscreen overlay */
+@keyframes search-fullscreen-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--surface-primary);
+  display: flex;
+  flex-direction: column;
+  animation: search-fullscreen-in 0.2s ease-out;
+}
+
+/* Highlight matched text */
+.search-highlight {
+  background: var(--interactive-subtle);
+  color: var(--interactive);
+  font-weight: 600;
+  padding: 0 1px;
+  border-radius: 2px;
+  text-decoration: none;
+}
+
+/* Result item interaction */
+.search-result-item {
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-md);
+}
+.search-result-item:focus-visible {
+  outline: 2px solid var(--interactive);
+  outline-offset: -2px;
+}
+
+/* Scrollbar for dropdown */
+.search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.search-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+.search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   In Stock Showcase — Carousel & Tabs
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Hide scrollbar cross-browser */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tab pill buttons */
+.stock-tab {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.stock-tab:focus-visible {
+  outline: 2px solid var(--interactive);
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+.stock-tab-active {
+  box-shadow: 0 1px 3px rgba(67, 56, 202, 0.25);
+}
+
+/* Carousel arrow buttons */
+.carousel-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.carousel-arrow:hover {
+  background: var(--surface-primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  color: var(--text-primary);
+}
+.carousel-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+

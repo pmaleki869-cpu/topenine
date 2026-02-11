@@ -4,7 +4,7 @@
  * For the redesign prototype, we use the static export at /data/products.json.
  */
 import type { Product, Category, FilterState } from "@/types";
-import { PART_TYPES } from "@/data/vehicle-hierarchy";
+import { PART_TYPES, VEHICLE_HIERARCHY } from "@/data/vehicle-hierarchy";
 import productsData from "../data/exports/products.json";
 import categoriesData from "../data/exports/categories.json";
 
@@ -177,4 +177,72 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
           classifyPartType(p.name) === partType)
     )
     .slice(0, limit);
+}
+
+// ─── In-Stock Products Grouped by Vehicle Make ──────────────────────────────
+export interface MakeProductGroup {
+  slug: string;
+  name: string;
+  products: Product[];
+  categoryIds: number[];
+}
+
+/**
+ * Returns in-stock products grouped by vehicle make (Toyota, Nissan, Ford, Mitsubishi)
+ * plus an "all" group with a diversified round-robin mix.
+ * Products are sorted: purchasable first, then by price descending.
+ */
+export function getInStockByMake(): { groups: MakeProductGroup[]; all: Product[]; totalInStock: number } {
+  const inStock = allProducts.filter((p) => p.is_in_stock && p.price_aed > 0);
+
+  // Collect all categoryIds per make from vehicle hierarchy
+  const groups: MakeProductGroup[] = VEHICLE_HIERARCHY.map((make) => {
+    const catIds = new Set<number>();
+    for (const model of make.models) {
+      for (const engine of model.engines) {
+        for (const cid of engine.categoryIds) catIds.add(cid);
+      }
+    }
+    const catIdArr = Array.from(catIds);
+
+    // Filter products matching this make's categories
+    const makeProducts = inStock
+      .filter((p) => p.categories.some((c) => catIds.has(c.id)))
+      .sort((a, b) => {
+        // Purchasable products first
+        if (a.is_purchasable !== b.is_purchasable) return a.is_purchasable ? -1 : 1;
+        // Then by price descending (showcase premium items)
+        return b.price_aed - a.price_aed;
+      });
+
+    return {
+      slug: make.slug,
+      name: make.name,
+      products: makeProducts,
+      categoryIds: catIdArr,
+    };
+  });
+
+  // "All" tab: round-robin diversified mix from each make (max 16)
+  const allMix: Product[] = [];
+  const seen = new Set<number>();
+  const maxPerRound = 16;
+  let round = 0;
+  while (allMix.length < maxPerRound && round < 50) {
+    let added = false;
+    for (const g of groups) {
+      if (round < g.products.length && allMix.length < maxPerRound) {
+        const p = g.products[round];
+        if (!seen.has(p.id)) {
+          allMix.push(p);
+          seen.add(p.id);
+          added = true;
+        }
+      }
+    }
+    if (!added) break;
+    round++;
+  }
+
+  return { groups, all: allMix, totalInStock: inStock.length };
 }
