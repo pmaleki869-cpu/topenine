@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ProductCard } from "@/components/ProductCard";
 import { UnifiedSearch } from "@/components/UnifiedSearch";
 import { InStockShowcase } from "@/components/InStockShowcase";
-import { getAllProducts, getInStockByMake } from "@/lib/products";
+import { getAllProducts, getInStockByMake, getOnSaleProducts } from "@/lib/products";
 import { VEHICLE_HIERARCHY, PART_TYPES } from "@/data/vehicle-hierarchy";
 import { organizationJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
@@ -97,6 +97,17 @@ export default function HomePage() {
 
   const topPartTypes = PART_TYPES.filter((pt) => pt.slug !== "other").slice(0, 6);
 
+  // On-sale products for Deals section
+  const onSale = getOnSaleProducts(4);
+
+  // Compute real stats for the stats counter
+  const totalEngineCodes = new Set(
+    VEHICLE_HIERARCHY.flatMap((m) =>
+      m.models.flatMap((mod) => mod.engines.map((e) => e.code))
+    )
+  ).size;
+  const totalPartTypes = PART_TYPES.filter((pt) => pt.slug !== "other").length;
+
   return (
     <>
       {/* JSON-LD: Organization + WebSite */}
@@ -150,7 +161,47 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ━━━ 2. IN STOCK NOW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━ 2. TRUST BAR (hero → content bridge) ━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="trust-bar section-gap-sm">
+        <div className="container-main">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {[
+              {
+                label: "OEM Genuine Parts",
+                desc: "Factory-direct sourcing",
+                icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
+              },
+              {
+                label: "1–3 Day UAE Delivery",
+                desc: "Sharjah warehouse",
+                icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg>,
+              },
+              {
+                label: "WhatsApp Support",
+                desc: "Replies in 30 min",
+                icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
+              },
+              {
+                label: "14-Day Returns",
+                desc: "Hassle-free policy",
+                icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" /></svg>,
+              },
+            ].map((item) => (
+              <div key={item.label} className="trust-bar-item">
+                <div className="trust-bar-icon">
+                  {item.icon}
+                </div>
+                <div>
+                  <div className="text-[14px] font-semibold text-text-primary leading-tight">{item.label}</div>
+                  <div className="text-[12px] text-text-secondary leading-tight mt-0.5 hidden sm:block">{item.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ 3. IN STOCK NOW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section className="section-gap">
         <div className="container-main">
           <InStockShowcase
@@ -161,10 +212,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust strip removed — hero trust line covers core claims */}
+      {/* ━━━ 4. WHY TOPENGINE — STATS COUNTER ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="stats-section section-gap">
+        <div className="container-main relative z-10">
+          <div className="text-center mb-8">
+            <p className="text-[12px] uppercase tracking-[0.12em] text-dark-text-muted mb-2">Why TopEngine</p>
+            <h2 className="text-[22px] lg:text-[28px] font-bold text-dark-text-primary">
+              Your Trusted OEM Parts Source
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                number: `${allProducts.length}+`,
+                label: "OEM Parts Listed",
+                icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>,
+              },
+              {
+                number: `${VEHICLE_HIERARCHY.length}`,
+                label: "Vehicle Makes",
+                icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7v10M12 4v16M16 7v10M4 12h16" /></svg>,
+              },
+              {
+                number: `${totalEngineCodes}`,
+                label: "Engine Codes",
+                icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+              },
+              {
+                number: `${totalPartTypes}`,
+                label: "Part Categories",
+                icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>,
+              },
+            ].map((stat) => (
+              <div key={stat.label} className="stat-card">
+                <div className="stat-icon">{stat.icon}</div>
+                <div className="stat-number">{stat.number}</div>
+                <div className="stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* ━━━ 4. SHOP BY CATEGORY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="section-gap bg-surface-secondary">
+      {/* ━━━ 5. SHOP BY CATEGORY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="section-gap section-accent-bg">
         <div className="container-main">
           <div className="section-label">
             <h2 className="text-[22px] font-semibold text-text-primary">
@@ -207,52 +298,75 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ━━━ 5. SHOP BY VEHICLE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="section-gap">
+      {/* ━━━ 6. SHOP BY VEHICLE (enriched v2) ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="section-gap bg-surface-secondary">
         <div className="container-main">
           <div className="section-label">
             <h2 className="text-[22px] font-semibold text-text-primary">
               Shop by Vehicle
             </h2>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {VEHICLE_HIERARCHY.map((make) => {
-              const colors = { bg: "bg-surface-secondary", text: "text-interactive" };
               const makePartCount = allProducts.filter((p) =>
                 p.brands.some((b) => b.toLowerCase() === make.slug)
               ).length;
 
               const logo = MAKE_LOGOS[make.slug];
+              const engineCodes = Array.from(
+                new Set(make.models.flatMap((m) => m.engines.map((e) => e.code)))
+              );
+
               return (
-                <Link key={make.slug} href={`/vehicles/${make.slug}`} className="make-card group">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${colors.bg} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg overflow-hidden p-2`}>
+                <Link key={make.slug} href={`/vehicles/${make.slug}`} className="make-card-v2 group">
+                  {/* Logo */}
+                  <div className="w-16 h-16 rounded-2xl bg-surface-secondary flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg overflow-hidden p-2">
                     {logo ? (
                       <Image src={logo} alt={make.name} width={48} height={48} className="object-contain w-10 h-10" />
                     ) : (
-                      <span className={`text-[24px] font-bold ${colors.text}`}>
+                      <span className="text-[24px] font-bold text-interactive">
                         {make.name.charAt(0)}
                       </span>
                     )}
                   </div>
-                  <h3 className="font-semibold text-text-primary text-[16px] mb-1 group-hover:text-interactive transition-colors duration-200">
-                    {make.name}
-                  </h3>
-                  <p className="text-[13px] text-text-secondary mb-3">
-                    {make.models.length} model{make.models.length !== 1 ? "s" : ""}
-                    {makePartCount > 0 && ` · ${makePartCount} parts`}
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-1.5">
-                    {make.models.slice(0, 3).map((m) => (
-                      <span key={m.slug} className="text-[12px] px-2.5 py-1 rounded-full bg-surface-secondary text-text-secondary font-medium transition-colors duration-200 group-hover:bg-interactive-subtle group-hover:text-interactive">
-                        {m.name}
-                      </span>
-                    ))}
-                    {make.models.length > 3 && (
-                      <span className="text-[12px] px-2.5 py-1 rounded-full bg-surface-secondary text-text-disabled font-medium">
-                        +{make.models.length - 3}
-                      </span>
-                    )}
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-text-primary text-[17px] group-hover:text-interactive transition-colors duration-200">
+                        {make.name}
+                      </h3>
+                      {makePartCount > 0 && (
+                        <span className="text-[12px] font-medium px-2 py-0.5 rounded-full bg-interactive-subtle text-interactive">
+                          {makePartCount} parts
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Models */}
+                    <p className="text-[13px] text-text-secondary mb-2.5">
+                      {make.models.map((m) => m.name).join(" · ")}
+                    </p>
+
+                    {/* Engine code badges */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {engineCodes.slice(0, 4).map((code) => (
+                        <span key={code} className="badge-engine">
+                          {code}
+                        </span>
+                      ))}
+                      {engineCodes.length > 4 && (
+                        <span className="text-[12px] px-2 py-0.5 rounded bg-surface-secondary text-text-disabled font-medium">
+                          +{engineCodes.length - 4}
+                        </span>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Arrow */}
+                  <svg className="w-5 h-5 text-text-disabled group-hover:text-interactive transition-all duration-200 group-hover:translate-x-1 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
               );
             })}
@@ -260,7 +374,35 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ━━━ 6. RECENTLY ADDED ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━ 7. DEALS & SAVINGS (conditional) ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {onSale.length > 0 && (
+        <section className="section-gap">
+          <div className="container-main">
+            <div className="section-label">
+              <h2 className="text-[22px] font-semibold text-text-primary">
+                <span className="inline-flex items-center gap-2">
+                  Deals &amp; Savings
+                  <span className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-[#FFF7ED] text-status-sale">
+                    SALE
+                  </span>
+                </span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {onSale.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Link href="/shop?sort=price-asc" className="btn btn-secondary">
+                View all deals →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ━━━ 8. RECENTLY ADDED ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section className="section-gap bg-surface-secondary">
         <div className="container-main">
           <div className="section-label">
@@ -281,8 +423,35 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ━━━ 7. CTA + FOOTER SYSTEM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━ 9. BRAND SHOWCASE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="brand-strip section-gap-sm">
+        <div className="container-main">
+          <div className="text-center mb-5">
+            <p className="text-[12px] uppercase tracking-[0.12em] text-text-disabled mb-1">Trusted OEM Brands</p>
+            <p className="text-[14px] text-text-secondary">Factory-authorized parts from the world&apos;s leading manufacturers</p>
+          </div>
+          <div className="flex items-center justify-center gap-8 lg:gap-16">
+            {VEHICLE_HIERARCHY.map((make) => {
+              const logo = MAKE_LOGOS[make.slug];
+              return logo ? (
+                <Link key={make.slug} href={`/vehicles/${make.slug}`} className="brand-logo block">
+                  <Image
+                    src={logo}
+                    alt={`${make.name} genuine parts`}
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 lg:w-16 lg:h-16 object-contain"
+                  />
+                </Link>
+              ) : null;
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ 10. CTA + FOOTER SYSTEM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section className="bg-dark-bg">
+        <div className="cta-accent-top" />
         <div className="container-main py-16 lg:py-12">
           <div className="flex flex-col lg:flex-row lg:items-start gap-10 lg:gap-16">
 

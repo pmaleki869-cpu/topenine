@@ -9,7 +9,7 @@
 :root {
   /* ─── Surfaces ──────────────────────────────────────────────────────── */
   --surface-primary:     #FFFFFF;
-  --surface-secondary:   #F8FAFC;
+  --surface-secondary:   #F1F5F9;
   --surface-elevated:    #FFFFFF;
   --surface-inverse:     #0C1220;
 
@@ -173,6 +173,18 @@ body {
   .section-gap {
     padding-top: var(--space-12);
     padding-bottom: var(--space-12);
+  }
+}
+
+.section-gap-sm {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+@media (min-width: 1024px) {
+  .section-gap-sm {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
   }
 }
 
@@ -385,6 +397,140 @@ body {
 }
 
 /* ─── (CTA banner CSS removed — now uses inline styles + Tailwind classes) ── */
+
+/* ─── Trust Bar (hero → content bridge) ───────────────────────────────────── */
+.trust-bar {
+  background: linear-gradient(135deg, rgba(67, 56, 202, 0.06) 0%, rgba(67, 56, 202, 0.03) 100%);
+  border-bottom: 1px solid rgba(67, 56, 202, 0.08);
+}
+
+.trust-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.trust-bar-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(67, 56, 202, 0.08);
+  color: var(--interactive);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── Stats Counter Section ──────────────────────────────────────────────── */
+.stats-section {
+  background: var(--dark-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(67, 56, 202, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 20px 16px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  background: linear-gradient(135deg, var(--dark-text-primary) 0%, var(--dark-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (min-width: 1024px) {
+  .stat-number {
+    font-size: 40px;
+  }
+}
+
+.stat-label {
+  font-size: var(--type-small);
+  color: var(--dark-text-secondary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--dark-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Section Accent Background ──────────────────────────────────────────── */
+.section-accent-bg {
+  background: linear-gradient(135deg, #F1F5F9 25%, #EEF2FF 100%);
+}
+
+/* ─── Enriched Make Card (v6.0 — wider layout) ───────────────────────────── */
+.make-card-v2 {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  padding: 28px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.make-card-v2:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ─── Brand Strip ────────────────────────────────────────────────────────── */
+.brand-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-logo {
+  filter: grayscale(100%) opacity(0.5);
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.brand-logo:hover {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.08);
+}
+
+/* ─── CTA Accent Line ────────────────────────────────────────────────────── */
+.cta-accent-top {
+  height: 3px;
+  background: linear-gradient(90deg, var(--interactive) 0%, var(--dark-accent) 100%);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Unified Search System — v2.0

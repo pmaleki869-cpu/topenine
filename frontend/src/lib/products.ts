@@ -179,6 +179,18 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
     .slice(0, limit);
 }
 
+// ─── On Sale Products ───────────────────────────────────────────────────────
+export function getOnSaleProducts(limit = 4): Product[] {
+  return allProducts
+    .filter((p) => p.on_sale && p.sale_price_aed > 0 && p.regular_price_aed > 0)
+    .sort((a, b) => {
+      const discA = ((a.regular_price_aed - a.sale_price_aed) / a.regular_price_aed) * 100;
+      const discB = ((b.regular_price_aed - b.sale_price_aed) / b.regular_price_aed) * 100;
+      return discB - discA; // highest discount first
+    })
+    .slice(0, limit);
+}
+
 // ─── In-Stock Products Grouped by Vehicle Make ──────────────────────────────
 export interface MakeProductGroup {
   slug: string;
