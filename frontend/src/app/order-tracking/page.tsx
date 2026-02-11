@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Order Status | TopEngine — Genuine Engine Parts UAE",
   description:
     "Check the status of your TopEngine order via WhatsApp. Get real-time updates on delivery and availability.",
+  alternates: {
+    canonical: "https://www.topengine.ae/order-tracking",
+  },
 };
 
 export default function OrderStatusPage() {

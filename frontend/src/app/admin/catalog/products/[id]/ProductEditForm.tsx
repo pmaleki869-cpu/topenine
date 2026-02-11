@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -48,6 +48,17 @@ export default function ProductEditForm({ product, allCategories }: Props) {
   const [imageUrl, setImageUrl] = useState(product.primary_image_url || "");
 
   const [dirty, setDirty] = useState(false);
+
+  // Warn user before navigating away with unsaved changes
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (dirty) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
 
   function markDirty() {
     if (!dirty) setDirty(true);

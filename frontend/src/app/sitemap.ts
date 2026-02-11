@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE_URL}/returns`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     { url: `${BASE_URL}/order-tracking`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${BASE_URL}/vehicles`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
   ];
 
   // ── Vehicle pages (make + model) ─────────────────────────────────────

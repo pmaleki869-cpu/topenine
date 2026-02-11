@@ -4,8 +4,8 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 /**
- * SearchBar — v5.0 Design System
- * OEM-normalized search with updated tokens.
+ * SearchBar — v5.1 Design System
+ * OEM-normalized search with aria-label.
  */
 export function SearchBar() {
   const router = useRouter();
@@ -23,13 +23,14 @@ export function SearchBar() {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full">
+    <form onSubmit={handleSubmit} className="relative w-full" role="search">
       <div className="flex">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by part name, OEM number, or engine code…"
+          aria-label="Search for engine parts"
           className="w-full px-3 py-2 rounded-l-md bg-white text-text-primary text-[14px] border-0 outline-none placeholder:text-text-disabled"
         />
         <button

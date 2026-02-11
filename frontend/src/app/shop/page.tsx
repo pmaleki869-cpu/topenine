@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, Suspense } from "react";
+import { useState, useMemo, useCallback, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
@@ -25,6 +25,7 @@ function ShopContent() {
   const [categoryId, setCategoryId] = useState(Number(searchParams.get("categoryId")) || 0);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const categories = useMemo(() => getCategories(), []);
 
@@ -87,7 +88,14 @@ function ShopContent() {
   const handlePartTypeChange = (v: string) => { setPartType(v); setPage(1); syncUrl({ partType: v, page: "1" }); };
   const handlePurchasableChange = (v: boolean) => { setPurchasableOnly(v); setPage(1); syncUrl({ purchasableOnly: v ? "true" : "", page: "1" }); };
   const handleInStockChange = (v: boolean) => { setInStockOnly(v); setPage(1); syncUrl({ inStockOnly: v ? "true" : "", page: "1" }); };
-  const handleSearchChange = (v: string) => { setSearch(v); setPage(1); syncUrl({ search: v, page: "1" }); };
+  const handleSearchChange = (v: string) => {
+    setSearch(v);
+    if (searchDebounce.current) clearTimeout(searchDebounce.current);
+    searchDebounce.current = setTimeout(() => {
+      setPage(1);
+      syncUrl({ search: v, page: "1" });
+    }, 300);
+  };
   const handleSortChange = (v: string) => { setSort(v); setPage(1); syncUrl({ sort: v, page: "1" }); };
   const handlePriceMinChange = (v: string) => { setPriceMin(v); setPage(1); syncUrl({ priceMin: v, page: "1" }); };
   const handlePriceMaxChange = (v: string) => { setPriceMax(v); setPage(1); syncUrl({ priceMax: v, page: "1" }); };

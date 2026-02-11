@@ -83,9 +83,13 @@ export function Header() {
           </nav>
 
           {/* Phone number — desktop only */}
-          <span className="hidden lg:inline text-[12px] text-text-disabled font-mono shrink-0 select-all">
+          <a
+            href="tel:+971551521264"
+            className="hidden lg:inline text-[12px] text-text-disabled hover:text-text-inverse font-mono shrink-0 transition-colors"
+            aria-label="Call TopEngine"
+          >
             +971 55 152 1264
-          </span>
+          </a>
 
           {/* Mobile hamburger menu */}
           <MobileMenu />

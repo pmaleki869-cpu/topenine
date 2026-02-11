@@ -5,6 +5,16 @@ import { HeroSearch } from "@/components/HeroSearch";
 import { getAllProducts } from "@/lib/products";
 import { VEHICLE_HIERARCHY, PART_TYPES } from "@/data/vehicle-hierarchy";
 import { organizationJsonLd } from "@/lib/json-ld";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "TopEngine — Genuine OEM Engine Parts UAE | Dubai Auto Parts",
+  description:
+    "Shop 600+ genuine OEM engine parts for Toyota, Nissan, Ford & Mitsubishi. Turbochargers, injectors, ECU units, alternators & more. Fast UAE & GCC delivery. WhatsApp support.",
+  alternates: {
+    canonical: "https://www.topengine.ae",
+  },
+};
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Homepage — TopEngine UAE v5.1 — Impact Redesign

@@ -2,6 +2,14 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 // In production, use process.env.AUTH_SECRET — for now, a hardcoded fallback
+if (!process.env.AUTH_SECRET && process.env.NODE_ENV === "production") {
+  console.warn(
+    "\u26A0\uFE0F  [TopEngine Auth] AUTH_SECRET env variable is not set! " +
+    "Using hardcoded fallback — this is INSECURE for production. " +
+    "Set AUTH_SECRET in your Vercel / hosting environment variables."
+  );
+}
+
 const SECRET = new TextEncoder().encode(
   process.env.AUTH_SECRET || "topengine-admin-secret-change-in-production-2026"
 );

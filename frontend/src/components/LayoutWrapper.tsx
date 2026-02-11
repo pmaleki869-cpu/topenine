@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { Toaster } from "sonner";
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,6 +16,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <Toaster position="top-right" richColors closeButton />
       {/* Skip-to-content for keyboard/screen-reader users */}
       <a
         href="#main-content"

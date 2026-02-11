@@ -100,6 +100,7 @@ export function FilterSidebar({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="OEM number, engine code…"
+            aria-label="Filter parts by OEM number or engine code"
             className="w-full px-3 py-2 text-[14px] border border-border rounded-md bg-white text-text-primary 
                        placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-interactive/40"
           />
