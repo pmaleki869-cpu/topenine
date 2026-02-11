@@ -11,6 +11,11 @@ import {
   Tag,
   Layers,
   Camera,
+  Plus,
+  MessageCircle,
+  Users,
+  Download,
+  Settings,
 } from "lucide-react";
 import { StockDonut, CategoryBarChart, PriceDistribution } from "./DashboardCharts";
 
@@ -99,6 +104,10 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl border border-gray-200/80 p-5">
           <h2 className="text-[14px] font-semibold text-gray-900 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-2">
+            <Link href="/admin/catalog/products/new" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-[13px] font-medium text-blue-700 transition-colors">
+              <Plus className="w-4 h-4" strokeWidth={1.5} />
+              New Product
+            </Link>
             <Link href="/admin/catalog/products" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
               <Package className="w-4 h-4" strokeWidth={1.5} />
               Products
@@ -107,13 +116,25 @@ export default function AdminDashboard() {
               <FolderOpen className="w-4 h-4" strokeWidth={1.5} />
               Categories
             </Link>
-            <Link href="/admin/inventory" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
-              <Warehouse className="w-4 h-4" strokeWidth={1.5} />
-              Inventory
+            <Link href="/admin/catalog/tags" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
+              <Tag className="w-4 h-4" strokeWidth={1.5} />
+              Tags
+            </Link>
+            <Link href="/admin/orders" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-emerald-50 text-[13px] font-medium text-gray-700 hover:text-emerald-700 transition-colors">
+              <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+              Inquiries
+            </Link>
+            <Link href="/admin/customers" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-emerald-50 text-[13px] font-medium text-gray-700 hover:text-emerald-700 transition-colors">
+              <Users className="w-4 h-4" strokeWidth={1.5} />
+              Leads
             </Link>
             <Link href="/admin/catalog/media" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
               <ImageIcon className="w-4 h-4" strokeWidth={1.5} />
               Media Library
+            </Link>
+            <Link href="/admin/settings" className="flex items-center gap-3 px-3 py-3 rounded-lg bg-gray-50 hover:bg-blue-50 text-[13px] font-medium text-gray-700 hover:text-blue-700 transition-colors">
+              <Download className="w-4 h-4" strokeWidth={1.5} />
+              Export Data
             </Link>
           </div>
         </div>

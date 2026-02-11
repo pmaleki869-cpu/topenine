@@ -14,7 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { Product, Category } from "@/types";
-import { updateProduct, deleteProduct } from "@/lib/admin-actions";
+import { updateProduct, deleteProduct, updateProductImage } from "@/lib/admin-actions";
 import { generateSlug, parsePrice } from "@/lib/validations";
 
 interface Props {
@@ -45,6 +45,7 @@ export default function ProductEditForm({ product, allCategories }: Props) {
   );
   const [tagInput, setTagInput] = useState(product.tags.map((t) => t.name).join(", "));
   const [brandInput, setBrandInput] = useState(product.brands.join(", "));
+  const [imageUrl, setImageUrl] = useState(product.primary_image_url || "");
 
   const [dirty, setDirty] = useState(false);
 
@@ -459,9 +460,9 @@ export default function ProductEditForm({ product, allCategories }: Props) {
               Primary Image
             </h2>
             <div className="aspect-square rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center border border-gray-200">
-              {product.primary_image_url ? (
+              {imageUrl ? (
                 <img
-                  src={product.primary_image_url}
+                  src={imageUrl}
                   alt={product.name}
                   className="w-full h-full object-contain"
                 />
@@ -474,19 +475,45 @@ export default function ProductEditForm({ product, allCategories }: Props) {
                 </div>
               )}
             </div>
+            <div className="mt-3 space-y-2">
+              <label htmlFor="imageUrl" className="block text-[11px] font-medium text-gray-500 uppercase">Image URL</label>
+              <input
+                id="imageUrl"
+                type="url"
+                value={imageUrl}
+                onChange={(e) => { setImageUrl(e.target.value); markDirty(); }}
+                placeholder="https://..."
+                className="w-full px-3 py-2 text-[12px] font-mono border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              />
+              <button
+                onClick={() => {
+                  startTransition(async () => {
+                    const result = await updateProductImage(product.id, imageUrl.trim());
+                    if (result.success) toast.success("Image updated");
+                    else toast.error(result.error);
+                  });
+                }}
+                disabled={isPending}
+                className="w-full py-2 text-[12px] font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40"
+              >
+                {isPending ? "Saving…" : "Save Image"}
+              </button>
+            </div>
             {product.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2 mt-3">
                 {product.images.slice(0, 4).map((img) => (
-                  <div
+                  <button
                     key={img.id}
-                    className="aspect-square rounded bg-gray-100 overflow-hidden border border-gray-200"
+                    type="button"
+                    onClick={() => { setImageUrl(img.src); markDirty(); }}
+                    className="aspect-square rounded bg-gray-100 overflow-hidden border border-gray-200 hover:border-blue-400 cursor-pointer"
                   >
                     <img
                       src={img.src}
                       alt={img.alt}
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             )}

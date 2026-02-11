@@ -9,6 +9,7 @@ import {
   Package,
   FolderOpen,
   ImageIcon,
+  Tag,
   ClipboardList,
   Users,
   Warehouse,
@@ -34,6 +35,7 @@ const NAV_SECTIONS = [
     items: [
       { href: "/admin/catalog/products", label: "Products", icon: Package },
       { href: "/admin/catalog/categories", label: "Categories", icon: FolderOpen },
+      { href: "/admin/catalog/tags", label: "Tags", icon: Tag },
       { href: "/admin/catalog/media", label: "Media", icon: ImageIcon },
     ],
   },
