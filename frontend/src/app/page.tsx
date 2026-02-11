@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { TrustStrip } from "@/components/TrustStrip";
 import { ProductCard } from "@/components/ProductCard";
 import { HeroSearch } from "@/components/HeroSearch";
 import { getAllProducts } from "@/lib/products";
@@ -85,8 +84,6 @@ export default function HomePage() {
 
   const topPartTypes = PART_TYPES.filter((pt) => pt.slug !== "other").slice(0, 6);
 
-  const totalProducts = allProducts.length;
-
   return (
     <>
       {/* JSON-LD: Organization + WebSite */}
@@ -96,58 +93,45 @@ export default function HomePage() {
       />
 
       {/* ━━━ 1. HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="hero">
-        <div className="container-main relative z-10 py-16 lg:py-24">
+      <section id="hero" className="hero">
+        <div className="container-main relative z-10 pt-12 pb-12 lg:pt-16 lg:pb-16">
           <div className="max-w-2xl mx-auto text-center">
             {/* Contextual label */}
-            <p className="text-[13px] uppercase tracking-[0.12em] text-dark-text-muted mb-4">
-              UAE&apos;s OEM Engine Parts Supplier
+            <p className="text-[13px] uppercase tracking-[0.12em] text-dark-text-muted mb-3">
+              OEM Engine Components &mdash; UAE
             </p>
 
             {/* Headline */}
-            <h1 className="text-[32px] lg:text-[40px] font-bold text-dark-text-primary leading-[1.1] tracking-tight mb-3">
-              Find Your Part
+            <h1 className="text-[32px] lg:text-[40px] font-bold text-dark-text-primary leading-[1.1] tracking-tight mb-2">
+              Diesel Engine Parts. Sourced Direct.
             </h1>
 
             {/* Subheadline */}
-            <p className="text-[15px] lg:text-[16px] text-dark-text-secondary mb-8 leading-relaxed">
-              Search by part number, engine code, or vehicle name.
+            <p className="text-[15px] lg:text-[16px] text-dark-text-secondary mb-6 leading-relaxed">
+              Toyota, Nissan, Ford, Mitsubishi. Search by OEM number or engine code.
             </p>
 
             {/* Hero search — large, rotating placeholders, auto-focus */}
             <HeroSearch />
 
             {/* Helper text with fallback links */}
-            <p className="text-[13px] text-dark-text-muted mt-5">
-              Or{" "}
-              <Link href="/vehicles" className="text-interactive hover:text-indigo-300 underline underline-offset-2 transition-colors">
-                browse by vehicle
+            <p className="text-[13px] text-dark-text-muted mt-4">
+              <Link href="/shop" className="text-dark-text-muted hover:text-interactive underline-offset-2 hover:underline transition-colors">
+                Browse all parts
               </Link>
-              {" · "}
-              <a
-                href="https://wa.me/971551521264?text=Hi%2C%20I%20need%20help%20finding%20an%20engine%20part."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-status-success hover:text-dark-accent underline underline-offset-2 transition-colors"
-              >
-                ask us on WhatsApp
-              </a>
+              {" \u00B7 "}
+              <Link href="/vehicles" className="text-dark-text-muted hover:text-interactive underline-offset-2 hover:underline transition-colors">
+                Browse by vehicle
+              </Link>
             </p>
 
-            {/* Trust line */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[12px] text-dark-text-muted">
-              <span className="inline-flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-dark-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                OEM Genuine Parts
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-dark-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                1–3 Day UAE Delivery
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-dark-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                {totalProducts}+ Parts in Stock
-              </span>
+            {/* Trust line — plain text, no icons */}
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[12px] text-dark-text-muted">
+              <span>OEM &amp; Genuine Parts</span>
+              <span className="text-dark-text-muted/40">·</span>
+              <span>UAE Delivery 1–3 Days</span>
+              <span className="text-dark-text-muted/40">·</span>
+              <span>14-Day Returns</span>
             </div>
           </div>
         </div>
@@ -174,8 +158,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ━━━ 3. TRUST STRIP ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <TrustStrip />
+      {/* Trust strip removed — hero trust line covers core claims */}
 
       {/* ━━━ 4. SHOP BY CATEGORY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section className="section-gap bg-surface-secondary">

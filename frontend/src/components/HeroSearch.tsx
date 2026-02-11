@@ -4,11 +4,11 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 const PLACEHOLDERS = [
-  "e.g. 1GD-FTV turbocharger",
-  "e.g. Hilux crankshaft",
-  "e.g. 89661-F0B00",
-  "e.g. Nissan Patrol sensor",
-  "e.g. Ford Ranger injector",
+  "Search: 89661-F0B00",
+  "Search: 1GD turbocharger",
+  "Search: Hilux crankshaft",
+  "Search: YD25 injector",
+  "Search: WL alternator",
 ];
 
 /**
