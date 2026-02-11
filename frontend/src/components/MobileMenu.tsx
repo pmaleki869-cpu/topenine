@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
   { href: "/shop", label: "All Parts" },
@@ -20,14 +20,11 @@ const NAV_LINKS = [
  */
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
-  const [menuSearch, setMenuSearch] = useState("");
   const pathname = usePathname();
-  const router = useRouter();
 
   // Close drawer on route change
   useEffect(() => {
     setOpen(false);
-    setMenuSearch("");
   }, [pathname]);
 
   // Lock body scroll when drawer is open
@@ -87,39 +84,6 @@ export function MobileMenu() {
             </svg>
           </button>
         </div>
-
-        {/* Quick search in drawer */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const trimmed = menuSearch.trim();
-            if (trimmed) {
-              router.push(`/shop?search=${encodeURIComponent(trimmed)}`);
-              setOpen(false);
-            }
-          }}
-          className="px-3 py-3 border-b border-dark-border"
-        >
-          <div className="flex rounded-md overflow-hidden bg-dark-surface border border-dark-border">
-            <input
-              type="text"
-              value={menuSearch}
-              onChange={(e) => setMenuSearch(e.target.value)}
-              placeholder="Search parts…"
-              aria-label="Search for engine parts"
-              className="flex-1 px-3 py-2.5 text-[14px] text-text-inverse bg-transparent outline-none placeholder:text-dark-text-muted"
-            />
-            <button
-              type="submit"
-              className="px-3 text-text-disabled hover:text-text-inverse transition-colors"
-              aria-label="Search"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-          </div>
-        </form>
 
         {/* Nav links */}
         <nav className="py-3 px-2">

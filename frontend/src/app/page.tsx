@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ProductCard } from "@/components/ProductCard";
-import { HeroSearch } from "@/components/HeroSearch";
+import { UnifiedSearch } from "@/components/UnifiedSearch";
 import { InStockShowcase } from "@/components/InStockShowcase";
 import { getAllProducts, getInStockByMake } from "@/lib/products";
 import { VEHICLE_HIERARCHY, PART_TYPES } from "@/data/vehicle-hierarchy";
@@ -124,8 +124,8 @@ export default function HomePage() {
               Toyota, Nissan, Ford, Mitsubishi. Search by OEM number or engine code.
             </p>
 
-            {/* Hero search — large, rotating placeholders, auto-focus */}
-            <HeroSearch />
+            {/* Hero search — professional typewriter + instant search */}
+            <UnifiedSearch variant="hero" />
 
             {/* Helper text with fallback links */}
             <p className="text-[13px] text-dark-text-muted mt-4">

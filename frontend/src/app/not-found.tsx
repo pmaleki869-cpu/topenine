@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SearchBar } from "@/components/SearchBar";
+import { NotFoundSearch } from "@/components/NotFoundSearch";
 
 export const metadata: Metadata = {
   title: "Page Not Found | TopEngine",
@@ -24,7 +24,7 @@ export default function NotFound() {
 
         {/* Search bar */}
         <div className="max-w-md mx-auto mb-8">
-          <SearchBar />
+          <NotFoundSearch />
         </div>
 
         {/* Quick links */}

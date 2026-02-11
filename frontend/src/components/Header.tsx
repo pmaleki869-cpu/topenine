@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { SearchCommand } from "./SearchCommand";
+import { UnifiedSearch } from "./UnifiedSearch";
 import { MobileMenu } from "./MobileMenu";
 
 /**
- * Header — v8.0
+ * Header — v9.0 (Unified Search)
  * 56px band: logo | instant search (desktop) | All Parts + Vehicles | phone | mobile search icon + hamburger
  */
 export function Header() {
@@ -61,7 +61,7 @@ export function Header() {
             {/* Instant search — desktop only, hidden on homepage while hero is in view */}
             {showSearch && (
               <div className="hidden lg:block flex-1 max-w-lg">
-                <SearchCommand />
+                <UnifiedSearch variant="header" />
               </div>
             )}
 
@@ -112,8 +112,8 @@ export function Header() {
 
       {/* Mobile fullscreen search overlay */}
       {mobileSearchOpen && (
-        <SearchCommand
-          mobile
+        <UnifiedSearch
+          variant="mobile"
           autoFocus
           onClose={() => setMobileSearchOpen(false)}
         />
