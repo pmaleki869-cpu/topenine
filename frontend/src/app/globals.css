@@ -1,0 +1,386 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TopEngine Design System v5.0
+   Total Reset — Principle-driven Architecture
+   Inter + JetBrains Mono · Indigo accent · 4px base · 15 color tokens
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Surfaces ──────────────────────────────────────────────────────── */
+  --surface-primary:     #FFFFFF;
+  --surface-secondary:   #F8FAFC;
+  --surface-elevated:    #FFFFFF;
+  --surface-inverse:     #0C1220;
+
+  /* ─── Text ──────────────────────────────────────────────────────────── */
+  --text-primary:        #1E293B;
+  --text-secondary:      #64748B;
+  --text-inverse:        #FFFFFF;
+  --text-disabled:       #94A3B8;
+
+  /* ─── Interactive ───────────────────────────────────────────────────── */
+  --interactive:         #4338CA;
+  --interactive-hover:   #3730A3;
+  --interactive-subtle:  #EEF2FF;
+
+  /* ─── Status ────────────────────────────────────────────────────────── */
+  --status-success:      #059669;
+  --status-warning:      #D97706;
+  --status-danger:       #DC2626;
+  --status-sale:         #EA580C;
+
+  /* ─── Structural (not for direct component use — mapped via roles) ── */
+  --border:              #E2E8F0;
+
+  /* ─── Dark Section Tokens (hero, CTA, footer) ──────────────────────── */
+  --dark-bg:             #0C1220;
+  --dark-text-primary:   #E2E8F0;
+  --dark-text-secondary: #94A3B8;
+  --dark-text-muted:     #64748B;
+  --dark-border:         rgba(255,255,255,0.08);
+  --dark-accent:         #34d399;
+  --dark-surface:        rgba(255,255,255,0.03);
+  --dark-surface-hover:  rgba(255,255,255,0.06);
+
+  /* ─── Typography Scale (7 tokens) ───────────────────────────────────── */
+  --font-sans:           var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-mono:           var(--font-jetbrains), ui-monospace, monospace;
+
+  --type-display:        36px;
+  --type-heading:        28px;
+  --type-h2:             22px;
+  --type-subheading:     16px;
+  --type-body:           15px;
+  --type-small:          14px;
+  --type-caption:        12px;
+
+  /* ─── Spacing Scale (8 tokens, 4px base) ────────────────────────────── */
+  --space-1:    4px;
+  --space-2:    8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-12:  48px;
+  --space-16:  64px;
+
+  /* ─── Layout ────────────────────────────────────────────────────────── */
+  --max-width:           1200px;
+  --max-width-narrow:     640px;
+
+  /* ─── Radius ────────────────────────────────────────────────────────── */
+  --radius-sm:    4px;
+  --radius-md:    6px;
+  --radius-lg:    8px;
+
+  /* ─── Shadows (cards only — no borders on cards) ────────────────────── */
+  --shadow-card:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover:  0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ─── Tailwind v4 Theme Mapping ──────────────────────────────────────────── */
+@theme inline {
+  /* Surfaces */
+  --color-surface-primary:    var(--surface-primary);
+  --color-surface-secondary:  var(--surface-secondary);
+  --color-surface-elevated:   var(--surface-elevated);
+  --color-surface-inverse:    var(--surface-inverse);
+
+  /* Text */
+  --color-text-primary:       var(--text-primary);
+  --color-text-secondary:     var(--text-secondary);
+  --color-text-inverse:       var(--text-inverse);
+  --color-text-disabled:      var(--text-disabled);
+
+  /* Interactive */
+  --color-interactive:        var(--interactive);
+  --color-interactive-hover:  var(--interactive-hover);
+  --color-interactive-subtle: var(--interactive-subtle);
+
+  /* Status */
+  --color-status-success:     var(--status-success);
+  --color-status-warning:     var(--status-warning);
+  --color-status-danger:      var(--status-danger);
+  --color-status-sale:        var(--status-sale);
+
+  /* Border */
+  --color-border:             var(--border);
+
+  /* Dark Section */
+  --color-dark-bg:             var(--dark-bg);
+  --color-dark-text-primary:   var(--dark-text-primary);
+  --color-dark-text-secondary: var(--dark-text-secondary);
+  --color-dark-text-muted:     var(--dark-text-muted);
+  --color-dark-border:         var(--dark-border);
+  --color-dark-accent:         var(--dark-accent);
+  --color-dark-surface:        var(--dark-surface);
+  --color-dark-surface-hover:  var(--dark-surface-hover);
+
+  /* Fonts */
+  --font-sans:                var(--font-sans);
+  --font-mono:                var(--font-mono);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+body {
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+/* ─── OpenType Features ──────────────────────────────────────────────────── */
+.font-numeric {
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.font-part-number {
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'ss02' 1;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* ─── Layout Utilities ───────────────────────────────────────────────────── */
+.container-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .container-main {
+    padding: 0 var(--space-6);
+  }
+}
+
+.container-narrow {
+  max-width: var(--max-width-narrow);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ─── Section Spacing ────────────────────────────────────────────────────── */
+.section-gap {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+@media (min-width: 1024px) {
+  .section-gap {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+  }
+}
+
+/* ─── Card System (shadow only, no border) ───────────────────────────────── */
+.card {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s ease;
+}
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* ─── Product Card (v5.2 — rich interactive card) ────────────────────────── */
+.product-card {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.product-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.product-card-image {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--surface-secondary);
+  overflow: hidden;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: var(--type-body);
+  font-weight: 500;
+  min-height: 44px;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+}
+.btn-primary   { background: var(--interactive); color: var(--text-inverse); }
+.btn-primary:hover { background: var(--interactive-hover); }
+.btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--surface-secondary); }
+.btn-ghost     { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--surface-secondary); }
+.btn-whatsapp  { background: var(--status-success); color: var(--text-inverse); }
+.btn-whatsapp:hover { background: #047857; }
+.btn-sm { min-height: 36px; padding: 6px 16px; font-size: var(--type-small); }
+
+@media (max-width: 768px) {
+  .btn { min-height: 48px; }
+}
+
+/* ─── Badge System ───────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--type-caption);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+.badge-sale    { background: #FFF7ED; color: var(--status-sale); }
+.badge-oos     { background: var(--surface-secondary); color: var(--text-secondary); }
+.badge-engine {
+  font-family: var(--font-mono);
+  font-size: var(--type-caption);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: var(--interactive-subtle);
+  color: var(--interactive-hover);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── SKU Badge ──────────────────────────────────────────────────────────── */
+.sku-badge {
+  font-family: var(--font-mono);
+  font-size: var(--type-small);
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'ss02' 1;
+}
+
+/* ─── WhatsApp Float ─────────────────────────────────────────────────────── */
+@keyframes wa-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,0.4); }
+  50%      { box-shadow: 0 0 0 10px rgba(5,150,105,0); }
+}
+.wa-float {
+  animation: wa-pulse 2s 3;
+}
+
+/* ─── Sticky Mobile CTA ─────────────────────────────────────────────────── */
+.sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--surface-elevated);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  padding: 12px 16px;
+}
+
+/* When sticky-cta is present (PDP mobile), push WA float above it */
+@media (max-width: 1023px) {
+  body:has(.sticky-cta) .wa-float {
+    bottom: 5rem;
+  }
+}
+
+/* ─── Scrollbar Hide ─────────────────────────────────────────────────────── */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ─── Homepage Hero ──────────────────────────────────────────────────────── */
+.hero {
+  background: var(--dark-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-stat {
+  text-align: center;
+  padding: 12px 0;
+}
+.hero-stat-value {
+  font-size: var(--type-heading);
+  font-weight: 700;
+  color: var(--dark-text-primary);
+  line-height: 1.2;
+}
+.hero-stat-label {
+  font-size: var(--type-caption);
+  color: var(--dark-text-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ─── Section Divider ────────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.section-label h2 {
+  white-space: nowrap;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Category Card (homepage — v5.2) ────────────────────────────────────── */
+.cat-card {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.cat-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ─── Make Card (homepage — v5.2) ────────────────────────────────────────── */
+.make-card {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  padding: 32px 20px 24px;
+  text-align: center;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.make-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ─── (CTA banner CSS removed — now uses inline styles + Tailwind classes) ── */
